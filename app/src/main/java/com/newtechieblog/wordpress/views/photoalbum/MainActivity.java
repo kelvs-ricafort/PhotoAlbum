@@ -64,8 +64,18 @@ public class MainActivity extends AppCompatActivity {
         activityResultLauncherForAddImage = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
-                    public void onActivityResult(ActivityResult o) {
+                    public void onActivityResult(ActivityResult result) {
+                        int resultCode = result.getResultCode();
+                        Intent data = result.getData();
 
+                        if (resultCode == RESULT_OK && data != null) {
+                            String title = data.getStringExtra("title");
+                            String description = data.getStringExtra("description");
+                            byte[] image = data.getByteArrayExtra("image");
+
+                            MyImages myImages = new MyImages(title, description, image);
+                            myImagesViewModel.insert(myImages);
+                        }
                     }
                 });
     }
