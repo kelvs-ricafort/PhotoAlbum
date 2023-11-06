@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -21,6 +22,11 @@ public class MyImagesAdapter extends RecyclerView.Adapter<MyImagesAdapter.MyImag
         notifyDataSetChanged();
     }
 
+    public MyImages getPosition(int position) {
+        return imagesList.get(position);
+    }
+
+    @NonNull
     @Override
     public MyImagesHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
