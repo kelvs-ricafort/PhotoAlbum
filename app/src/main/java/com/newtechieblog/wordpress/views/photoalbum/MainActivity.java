@@ -1,11 +1,17 @@
 package com.newtechieblog.wordpress.views.photoalbum;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Insert;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -18,10 +24,14 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fab;
     private MyImagesViewModel myImagesViewModel;
 
+    private ActivityResultLauncher<Intent> activityResultLauncherForAddImage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        registerActivityForAddImage();
 
         rv = findViewById(R.id.rv);
         fab = findViewById(R.id.fab);
@@ -44,8 +54,19 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(MainActivity.this, AddImageActivity.class);
+                activityResultLauncherForAddImage.launch(intent);
             }
         });
+    }
+
+    public void registerActivityForAddImage() {
+        activityResultLauncherForAddImage = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult o) {
+
+                    }
+                });
     }
 }
