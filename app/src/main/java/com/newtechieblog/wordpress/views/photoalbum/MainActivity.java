@@ -25,8 +25,8 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView rv;
     private FloatingActionButton fab;
     private MyImagesViewModel myImagesViewModel;
-
     private ActivityResultLauncher<Intent> activityResultLauncherForAddImage;
+    private ActivityResultLauncher<Intent> activityResultLauncherForUpdateImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         registerActivityForAddImage();
+        registerActivityForUpdateImage();
 
         rv = findViewById(R.id.rv);
         fab = findViewById(R.id.fab);
@@ -73,6 +74,40 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }).attachToRecyclerView(rv);
+
+        adapter.setListener(new MyImagesAdapter.OnImageClickListener() {
+            @Override
+            public void onImageClick(MyImages myImages) {
+                Intent intent = new Intent(MainActivity.this, UpdateImageActivity.class);
+                intent.putExtra("id", myImages.getImage_id());
+                intent.putExtra("title", myImages.getImage_title());
+                intent.putExtra("description", myImages.getImage_description());
+                intent.putExtra("image", myImages.image);
+                activityResultLauncherForUpdateImage.launch(intent);
+            }
+        });
+    }
+
+    public void registerActivityForUpdateImage() {
+        activityResultLauncherForUpdateImage = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                int resultCode = result.getResultCode();
+                Intent data = result.getData();
+
+                if (resultCode == RESULT_OK && data != null) {
+                    String title = data.getStringExtra("updateTitle");
+                    String description = data.getStringExtra("updateDescription");
+                    byte[] image = data.getByteArrayExtra("image");
+                    int id = data.getIntExtra("id", -1);
+
+                    MyImages myImages = new MyImages(title, description, image);
+                    myImages.setImage_id(id);
+                    myImagesViewModel.update(myImages);
+                }
+            }
+        });
     }
 
     public void registerActivityForAddImage() {
